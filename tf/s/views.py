@@ -19,10 +19,8 @@ from sklearn.cluster import Ward
 from skimage.filter import denoise_tv_chambolle
 import scipy.ndimage as ndI
 from PIL import Image
-import matplotlib.pyplot as plt
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from skimage.segmentation import mark_boundaries
-import matplotlib.cm as cm
 #from rectangle import Rectangle
 
 #from skimage import filter
