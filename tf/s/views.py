@@ -7,7 +7,9 @@ from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from s.models import User, Picture, Featured_Picture
-
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
+import cStringIO
 import time as time
 import numpy as np
 import scipy as sp
@@ -21,7 +23,7 @@ import matplotlib.pyplot as plt
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from skimage.segmentation import mark_boundaries
 import matplotlib.cm as cm
-from rectangle import Rectangle
+#from rectangle import Rectangle
 
 #from skimage import filter
 
@@ -42,7 +44,7 @@ def calculate_final_image_matrix(shape_image, first_image_cluster_segments_std_a
 
     return final_image_matrix
 
-def calculate_ambiguous_clusters(first_image_cluster_segments_std, second_image_cluster_segments_std, image_std_mean):
+def calculate_ambiguous_clusters(first_image_cluster_segments_std, second_image_cluster_segments_std, image_std_mean, transitional_matrix):
     ambiguous_low_std_clusters = []
     ambiguous_high_std_clusters = []
 
@@ -145,9 +147,9 @@ def merge_matrixes(first_label_matrix, second_label_matrix):
 
 
 def image_std(image):
-    image_width, image_height = pil_image.size
-    first_image = np.asarray(pil_image)
-    image = pl.mean(first_image, 2)
+    image_width, image_height = image.size
+    image = np.asarray(image)
+    image = pl.mean(image, 2)
 
     box_height = box_width = 3
 
@@ -204,48 +206,68 @@ def test(request):
     ###############################################################################
     ## REQUEST POST VALUES
     ###############################################################################
-    user_id = request.POST['user_id']
-    first_image = Image.open(cStringIO.StringIO(request.FILES['first_image'].read())).convert('RGB')
-    second_image = Image.open(cStringIO.StringIO(request.FILES['second_image'].read())).convert('RGB')
+    
+    try:
+        user_id = request.POST['user_id']
+        user = User.objects.get(id=user_id)
+    except:
+        user = User()
+        user.pub_date = timezone.now()
+        user.save()
+    
+    picture = user.picture_set.create()
+    
+    first_image = Image.open(cStringIO.StringIO(request.FILES['apiupload_0'].read())).convert('RGB')
+    second_image = Image.open(cStringIO.StringIO(request.FILES['apiupload_1'].read())).convert('RGB')
     
     ###############################################################################
     ## SCALE AND STD FIRST IMAGE
     ###############################################################################
+    print "mEtodo iterativo 1"
     width, height = first_image.size
     if scale != 1:
         first_image = first_image.resize((int(scale*width), int(scale*height)), Image.ANTIALIAS)
+        
+    first_std_image = image_std(first_image)
+    
+    
     first_image = np.asarray(first_image)
     first_image_final = np.copy(first_image)
-    first_std_image = image_std(first_image)
+    
+    first_label = np.zeros(shape=(len(first_image),len(first_image[0])))
+    first_image = pl.mean(first_image,2)
+    first_label = np.reshape(first_label, first_image.shape)
     
     ###############################################################################
     ## SCALE AND STD SECOND IMAGE
     ###############################################################################
     if scale != 1:
         second_image = second_image.resize((int(scale*width), int(scale*height)), Image.ANTIALIAS)
-    second_image = np.asarray(second_image)
-    second_image_final = np.copy(second_image)
-    second_std_image = image_std(second_image)
     
+    second_std_image = image_std(second_image)
+    second_image_array = np.asarray(second_image)
+    second_image_final = np.copy(second_image)
+    
+    print "mEtodo iterativo 3"
     ###############################################################################
     ## ITERATIVE CLUSTERING
     ###############################################################################
-    clustering_index = 0:
+    clustering_index = 0
     is_clustering_done = False
+    print "mEtodo iterativo"
+    
     while not is_clustering_done:
         
         ###############################################################################
         #FIRST IMAGE
         ###############################################################################
-        first_label = np.zeros(shape=(len(first_image),len(first_image[0])))
-        first_image = pl.mean(first_image,2)
-        first_label = np.reshape(first_label, first_image.shape)
+
         
         ###############################################################################
         #SECOND IMAGE
         ###############################################################################
-        second_label = slic(second_image, ratio=second_slic_ratio, n_segments=second_n_segments, sigma=second_sigma, max_iter=second_max_iter)
-        second_image = pl.mean(second_image,2)
+        second_label = slic(second_image_array, ratio=second_slic_ratio, n_segments=second_n_segments, sigma=second_sigma, max_iter=second_max_iter)
+        second_image = pl.mean(second_image_array,2)
         second_label = np.reshape(second_label, second_image.shape)
         
         
@@ -277,7 +299,7 @@ def test(request):
         ###############################################################################
         # CALCULATE AMBIGUOUS CLUSTERS
         ###############################################################################
-        abiguous_clusters = calculate_ambiguous_clusters(first_image_cluster_segments_std, second_image_cluster_segments_std, image_std_mean)
+        abiguous_clusters = calculate_ambiguous_clusters(first_image_cluster_segments_std, second_image_cluster_segments_std, image_std_mean, transitional_matrix)
         low_ambiguous_cluster = abiguous_clusters[0]
         high_ambiguous_cluster = abiguous_clusters[1]
         
@@ -349,7 +371,6 @@ def test(request):
                     second_sigma = second_sigma - 2
                     
             clustering_index = clustering_index + 1
-
 
     ###############################################################################
     # CALCULATE THE 2D MEAN STD() OF EACH CLUSTER
@@ -614,16 +635,53 @@ def test(request):
 
     
     ###############################################################################
-    # SEND IMAGE TO BOTO  -> TODO
+    # SEND IMAGE TO BOTO -> TODO
     ###############################################################################
-    #final_blurred_image    
+    # import pdb; pdb.set_trace()
+    #Connect to S3, with AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+    conn = S3Connection('AKIAIFPFKLTD5HLWDI2A', 'zrCRXDSD3FKTJwJ3O5m/dsZstL/Ki0NyF6GZKHQi')
+    b = conn.get_bucket('tfserver')
+    
+    
+    for i in [0, 1]:
+        #Actual index image key
+        key = 'apiupload_' + str(i)
+    
+        pil_final_image = Image.fromarray(final_blurred_image)
+    
+        out_image = cStringIO.StringIO()
+        pil_final_image.save(out_image, 'jpeg')
+    
+        #Creates the image key with the following format:
+        #frame_name = <user_id>_<fof_name>_<frame_index>.jpeg
+        frame_name = str(user.id)
+        frame_name += "_"
+        frame_name += str(picture.id)
+        frame_name += ".jpeg"
+        
+        #Creates url:
+        #frame_url = <s3_url>/<frame_name>
+        frame_url = 'http://tfserver.s3.amazonaws.com/'
+        frame_url += frame_name
+    
+        k = b.new_key(frame_name)
+    
+        #Note we're setting contents from the in-memory string provided by cStringIO
+        k.set_contents_from_string(out_image.getvalue())
+    
+    #final_blurred_image
     
     ###############################################################################
     # RETURN HTTP RESPONSE WITH IMAGE URL -> TODO
     ###############################################################################
     
-    
-    response_data = {"result": "OK"}
 
+    picture.pub_date = timezone.now()
+    picture.url = frame_url
+    picture.save()
+    
+    response_data = {"result": "OK", "url":frame_url, "user_id":user.id}
+    
+    #return render_to_response('uploader/fof_viewer.html', {'type':"power_feed_fof",'hide_arrows': 0, 'frame_list':frame_list,'next_fof_name':next_fof_index, 'prev_fof_name':prev_fof_index, 'fof_date':fof.pub_date, 'current_fof':fof.name, 'user_name':user_name, 'fof_id':fof.id}, context_instance=RequestContext(request))
     return HttpResponse(json.dumps(response_data), mimetype="aplication/json")
     
