@@ -182,7 +182,10 @@ def image_std(image):
 
     return new_image
 
-
+@csrf_exempt
+def upload(request):
+    return {"ok":"ok"}
+    
 @csrf_exempt
 def test(request):
 
