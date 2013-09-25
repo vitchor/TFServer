@@ -1,7 +1,6 @@
 # Create your views here.
 import sys
 # import os
-from django.db.models import Q
 from django.utils import timezone
 from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseRedirect
@@ -14,16 +13,9 @@ import time as time
 # import numpy as np
 # import scipy as sp
 # import pylab as pl
-# from sklearn.feature_extraction.image import grid_to_graph
-# from sklearn.cluster import Ward
-# from skimage.filter import denoise_tv_chambolle
-# import scipy.ndimage as ndI
 from PIL import Image
-# from skimage.segmentation import felzenszwalb, slic, quickshift
-# from skimage.segmentation import mark_boundaries
+from skimage.segmentation import slic
 # #from rectangle import Rectangle
-
-#from skimage import filter
 
 def calculate_final_image_matrix(shape_image, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array):
     final_image_matrix = np.zeros(shape=(len(shape_image),len(shape_image[0])))
