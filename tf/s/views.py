@@ -2,7 +2,7 @@
 import sys
 import os
 #import tempfile
-os.environ['MPLCONFIGDIR'] = "/home/ubuntu/TFServer/temp"
+#os.environ['MPLCONFIGDIR'] = "/home/ubuntu/TFServer/temp"
 from django.db.models import Q
 from django.utils import timezone
 from django.utils import simplejson as json
@@ -16,7 +16,7 @@ import time as time
 import numpy as np
 import scipy as sp
 import pylab as pl
-from skimage.segmentation import slic
+#from skimage.segmentation import slic
 from PIL import Image
 
 # #from rectangle import Rectangle
