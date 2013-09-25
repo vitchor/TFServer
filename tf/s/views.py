@@ -1,27 +1,27 @@
 # Create your views here.
 import sys
-import os
-from django.db.models import Q
-from django.utils import timezone
-from django.utils import simplejson as json
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
-from s.models import User, Picture, Featured_Picture
-from boto.s3.connection import S3Connection
-from boto.s3.key import Key
-import cStringIO
-import time as time
-import numpy as np
-import scipy as sp
-import pylab as pl
-from sklearn.feature_extraction.image import grid_to_graph
-from sklearn.cluster import Ward
-from skimage.filter import denoise_tv_chambolle
-import scipy.ndimage as ndI
-from PIL import Image
-from skimage.segmentation import felzenszwalb, slic, quickshift
-from skimage.segmentation import mark_boundaries
-#from rectangle import Rectangle
+# import os
+# from django.db.models import Q
+# from django.utils import timezone
+# from django.utils import simplejson as json
+# from django.http import HttpResponse, HttpResponseRedirect
+# from django.views.decorators.csrf import csrf_exempt
+# from s.models import User, Picture, Featured_Picture
+# from boto.s3.connection import S3Connection
+# from boto.s3.key import Key
+# import cStringIO
+# import time as time
+# import numpy as np
+# import scipy as sp
+# import pylab as pl
+# from sklearn.feature_extraction.image import grid_to_graph
+# from sklearn.cluster import Ward
+# from skimage.filter import denoise_tv_chambolle
+# import scipy.ndimage as ndI
+# from PIL import Image
+# from skimage.segmentation import felzenszwalb, slic, quickshift
+# from skimage.segmentation import mark_boundaries
+# #from rectangle import Rectangle
 
 #from skimage import filter
 
