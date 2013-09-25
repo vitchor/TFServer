@@ -18,9 +18,8 @@ import time as time
 import numpy as np
 import scipy as sp
 import pylab as pl
-#from skimage.segmentation import slic
 from PIL import Image
-
+from skimage.segmentation import slic
 # #from rectangle import Rectangle
 
 def calculate_final_image_matrix(shape_image, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array):
