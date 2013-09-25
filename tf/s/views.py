@@ -12,11 +12,11 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import cStringIO
 import time as time
-# import numpy as np
-# import scipy as sp
-# import pylab as pl
-from PIL import Image
+import numpy as np
+import scipy as sp
+import pylab as pl
 # from skimage.segmentation import slic
+from PIL import Image
 # #from rectangle import Rectangle
 
 def calculate_final_image_matrix(shape_image, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array):
