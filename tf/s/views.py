@@ -1,8 +1,8 @@
 # Create your views here.
 import sys
 import os
-import tempfile
-os.environ['MPLCONFIGDIR'] = tempfile.mkdtemp()
+#import tempfile
+os.environ['MPLCONFIGDIR'] = = "/home/ubuntu/TFServer/temp"
 from django.db.models import Q
 from django.utils import timezone
 from django.utils import simplejson as json
