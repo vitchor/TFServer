@@ -1,6 +1,8 @@
 # Create your views here.
 import sys
 # import os
+from django.db.models import Q
+
 from django.utils import timezone
 from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseRedirect
@@ -14,7 +16,7 @@ import time as time
 # import scipy as sp
 # import pylab as pl
 from PIL import Image
-from skimage.segmentation import slic
+# from skimage.segmentation import slic
 # #from rectangle import Rectangle
 
 def calculate_final_image_matrix(shape_image, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array):
