@@ -1,8 +1,9 @@
 # Create your views here.
 import sys
-# import os
+import os
+import tempfile
+os.environ['MPLCONFIGDIR'] = tempfile.mkdtemp()
 from django.db.models import Q
-
 from django.utils import timezone
 from django.utils import simplejson as json
 from django.http import HttpResponse, HttpResponseRedirect
@@ -15,8 +16,9 @@ import time as time
 import numpy as np
 import scipy as sp
 import pylab as pl
-# from skimage.segmentation import slic
+from skimage.segmentation import slic
 from PIL import Image
+
 # #from rectangle import Rectangle
 
 def calculate_final_image_matrix(shape_image, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array):
