@@ -21,3 +21,8 @@ TFServer
   - sudo easy_install boto
   - sudo easy_install PIL
 
+3. HOW TO FIX REQUIRE_DEBUG_FALSE BUG:
+  - Remove any lines (and containers) containing require debug_false from both files:
+    - /usr/lib/python2.7/dist-packages/django/conf/global_settings.py
+    - [PROJECT_DIR]/tf/tf/settings.py
+
