@@ -12,11 +12,11 @@ TFServer
 2. UBUNTU PYTHON MATH SETUP:
   - apt-get install python-numpy
   - apt-get install python-scipy
-  - sudo easy_install ipython[all]
   - apt-get install python-pandas
   - apt-get install python-sympy
   - apt-get install python-sklearn
   - apt-get install cython
+  - apt-get install python-setuptools
   - sudo easy_install -U scikit-image
   - sudo easy_install boto
   - sudo easy_install PIL
