@@ -33,27 +33,27 @@ TFServer: alternative web-server and WSGI handler (works better):
 How to setup a django using nginx+uWSGI (full tutorial with tests on https://uwsgi.readthedocs.org/en/latest/tutorials/Django_and_nginx.html)
 
   1. If pip is still not available, install using:
-    $ sudo apt-get install python-setuptools
+    sudo apt-get install python-setuptools
 
   2. Download django:
-    $ sudo pip install Django
+    sudo pip install Django
 
   3. Install uwsgi:
-    $ sudo pip install uwsgi
+    sudo pip install uwsgi
 
   4. Stop apache2 and uninstall it [if installed]:
-    $ sudo service apache2 stop
-    $ sudo apt-get remove apache2
+    sudo service apache2 stop
+    sudo apt-get remove apache2
 
   5. Install nginx:
-    $ sudo apt-get install nginx
-    $ sudo service nginx start
+    sudo apt-get install nginx
+    sudo service nginx start
 
   6. Move to your project's path:
-    $ cd /path/to/mysite/
+    cd /path/to/mysite/
 
   7. Create an uwsgi_params file on your mysite's root:
-    $ sudo nano uwsgi_params
+    sudo nano uwsgi_params
     And paste the content from this file: https://github.com/nginx/nginx/blob/master/conf/uwsgi_params
 
   8. Create a file called mysite_nginx.conf and put this:
