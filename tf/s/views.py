@@ -1,7 +1,6 @@
 # Create your views here.
 import sys
 import os
-
 #import tempfile
 #os.environ['MPLCONFIGDIR'] = "/home/ubuntu/TFServer/temp"
 import tempfile
@@ -15,14 +14,10 @@ from s.models import User, Picture, Featured_Picture
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import cStringIO
-import matplotlib
-matplotlib.use('AGG')
-import matplotlib.pylab as pl
-#pl.ioff()
 import time as time
 import numpy as np
 import scipy as sp
-
+import pylab as pl
 from PIL import Image
 from skimage.segmentation import slic
 # #from rectangle import Rectangle
@@ -202,7 +197,7 @@ def test(request):
     first_sigma = 1
     second_slic_ratio = 2
     second_n_segments = 8
-    second_sigma =4
+    second_sigma =3
     first_max_iter = 10
     second_max_iter = 10
     
@@ -352,7 +347,7 @@ def test(request):
         ###############################################################################
         # CALCULATE NEW CLUSTERING PARAMETERS
         ###############################################################################
-        if np.absolute(ambiguous_dif) < 200 or clustering_index == 2:
+        if np.absolute(ambiguous_dif) < 200 or clustering_index == 3:
             is_clustering_done = True
             print "ITERATION FINISHED AT INDEX ", clustering_index
         else:
@@ -393,7 +388,7 @@ def test(request):
     ###############################################################################
     # CALCULATE FINAL IMAGE MATRIX
     ###############################################################################
-    print "MERGING IMAGEs..."
+    print "MERGING IMAGES..."
     final_image_matrix = calculate_final_image_matrix(first_image_final, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array)
     
     ###############################################################################
@@ -469,7 +464,8 @@ def test(request):
                     should_break = False
                     lower_geometry = int(max(bounds))
                     upper_geometry = int(min(bounds))
-    
+                    
+                    print "  MERGING..."
                     if is_first:
                         geometry_row_translation = geometries_first_row_index_dict[lower_geometry] - 1
     
