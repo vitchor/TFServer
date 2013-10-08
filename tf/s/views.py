@@ -221,7 +221,7 @@ def test(request):
     ###############################################################################
     ## SCALE AND STD FIRST IMAGE
     ###############################################################################
-    print "mEtodo iterativo 1"
+
     width, height = first_image.size
     if scale != 1:
         first_image = first_image.resize((int(scale*width), int(scale*height)), Image.ANTIALIAS)
@@ -246,13 +246,14 @@ def test(request):
     second_image_array = np.asarray(second_image)
     second_image_final = np.copy(second_image)
     
-    print "mEtodo iterativo 3"
+
     ###############################################################################
     ## ITERATIVE CLUSTERING
     ###############################################################################
     clustering_index = 0
     is_clustering_done = False
-    print "mEtodo iterativo"
+
+    print "INITIAL ITERATION PARAMETERS:", second_slic_ratio, second_n_segments, second_sigma
     
     while not is_clustering_done:
         
@@ -369,6 +370,7 @@ def test(request):
                     second_sigma = second_sigma - 2
                     
             clustering_index = clustering_index + 1
+        print "NEW ITERATION PARAMETERS:", second_slic_ratio, second_n_segments, second_sigma
     
     ###############################################################################
     # CALCULATE THE 2D MEAN STD() OF EACH CLUSTER
@@ -386,11 +388,13 @@ def test(request):
     ###############################################################################
     # CALCULATE FINAL IMAGE MATRIX
     ###############################################################################
+    print "MERGING IMAGEs..."
     final_image_matrix = calculate_final_image_matrix(first_image_final, first_image_cluster_segments_std_array, second_image_cluster_segments_std_array)
     
     ###############################################################################
     # CREATE GEOMETRY ANALISYS
     ###############################################################################
+    print "GEOMETRY ANALISYS..."
     first_image_result_matrix = np.zeros(shape=(len(first_image_final),len(first_image_final[0])), dtype=np.int)
     second_image_result_matrix = np.zeros(shape=(len(first_image_final),len(first_image_final[0])), dtype=np.int)
     
@@ -555,6 +559,7 @@ def test(request):
     ###############################################################################
     # APPLY BLURR TO BORDERS
     ###############################################################################
+    print "APPLY BLURR..."    
     final_blurred_image = np.copy(final_image)
     
     for index_row in range(len(final_image_cluster)):
@@ -633,9 +638,9 @@ def test(request):
     
     
     ###############################################################################
-    # SEND IMAGE TO BOTO -> TODO
+    # SEND IMAGE TO BOTO
     ###############################################################################
-    # import pdb; pdb.set_trace()
+    print "IMAGE TO BOTO..."
     #Connect to S3, with AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
     conn = S3Connection('AKIAIFPFKLTD5HLWDI2A', 'zrCRXDSD3FKTJwJ3O5m/dsZstL/Ki0NyF6GZKHQi')
     b = conn.get_bucket('tfserver')
@@ -678,6 +683,7 @@ def test(request):
     picture.url = frame_url
     picture.save()
     
+    print "DONE!"
     response_data = {"result": "OK", "url":frame_url, "user_id":user.id}
     
     #return render_to_response('uploader/fof_viewer.html', {'type':"power_feed_fof",'hide_arrows': 0, 'frame_list':frame_list,'next_fof_name':next_fof_index, 'prev_fof_name':prev_fof_index, 'fof_date':fof.pub_date, 'current_fof':fof.name, 'user_name':user_name, 'fof_id':fof.id}, context_instance=RequestContext(request))
