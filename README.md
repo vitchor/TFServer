@@ -30,34 +30,35 @@ TFServer
 TFServer: alternative web-server and WSGI handler (works better):
 =================================================================
 
-How to setup a django using nginx+uWSGI (full tutorial with tests on https://uwsgi.readthedocs.org/en/latest/tutorials/Django_and_nginx.html)
+How to setup a django using nginx+uWSGI - full tutorial with tests on https://uwsgi.readthedocs.org/en/latest/tutorials/Django_and_nginx.html)
 
-  1. If pip is still not available, install using:
-    sudo apt-get install python-setuptools
+  1. If pip is still not available, install using:  
+  ``` $ sudo apt-get install python-setuptools ```
 
-  2. Download django:
-    sudo pip install Django
+  2. Download django:   
+  ``` $ sudo pip install Django ```
 
-  3. Install uwsgi:
-    sudo pip install uwsgi
+  3. Install uwsgi:  
+  ``` $ sudo pip install uwsgi ```
 
-  4. Stop apache2 and uninstall it [if installed]:
-    sudo service apache2 stop
-    sudo apt-get remove apache2
+  4. Stop apache2 and uninstall it [if installed]:  
+  ``` $ sudo service apache2 stop ```  
+  ``` $ sudo apt-get remove apache2 ```
 
-  5. Install nginx:
-    sudo apt-get install nginx
-    sudo service nginx start
+  5. Install nginx:  
+  ``` $ sudo apt-get install nginx ```  
+  ``` $ sudo service nginx start ```  
 
-  6. Move to your project's path:
-    cd /path/to/mysite/
+  6. Move to your project's path:  
+  ``` cd /path/to/mysite/ ```  
 
-  7. Create an uwsgi_params file on your mysite's root:
-    sudo nano uwsgi_params
+  7. Create an uwsgi_params file on your mysite's root:  
+  ``` $ sudo nano uwsgi_params ```  
     And paste the content from this file: https://github.com/nginx/nginx/blob/master/conf/uwsgi_params
 
   8. Create a file called mysite_nginx.conf and put this:
 
+    ```
     # mysite_nginx.conf
     
     # the upstream component nginx needs to connect to
@@ -92,15 +93,21 @@ How to setup a django using nginx+uWSGI (full tutorial with tests on https://uws
             include     /path/to/your/mysite/uwsgi_params; # the uwsgi_params file you installed
         }
     }
+    ```
 
-  9. Symlink to this file from /etc/nginx/sites-enabled:
-    $ sudo ln -s ~/path/to/your/mysite/mysite_nginx.conf /etc/nginx/sites-enabled/
+  9. Symlink to this file from /etc/nginx/sites-enabled:  
+  ``` $ sudo ln -s ~/path/to/your/mysite/mysite_nginx.conf /etc/nginx/sites-enabled/ ```
 
-  10. Run this command (from inside your mysite's folder):
-    $ uwsgi --socket mysite.sock --module mysite.wsgi --chmod-socket=666
+  10. Run this command (from inside your mysite's folder):  
+  ``` $ uwsgi --socket mysite.sock --module mysite.wsgi --chmod-socket=666 ```
 
-  11. Restart nginx:
-    $ sudo service nginx restart
+  11. Restart nginx:  
+  ``` $ sudo service nginx restart ```
 
+  - IMPORTANT NOTE: if you're doing this in a remote server (amazon EC2 or whatever), you will notice that once you've done the ```uwsgi``` command, you'll have your command line freezed. For this matter, replace step 10 with the ```screen``` tool as follows:  
+  ``` $ screen ```  
+  ``` $ uwsgi --socket mysite.sock --module mysite.wsgi --chmod-socket=666 ```  
+  Press ``` ctrl + d ```  
+  You can go back there anytime by typing ```$ screen -ls ``` and typing ```$ screen -r [PID_FROM_THE_SCREEN_YOU_WANT]```
 
 
