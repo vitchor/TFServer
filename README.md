@@ -105,5 +105,4 @@ TFServer
     - /usr/lib/python2.7/dist-packages/django/conf/global_settings.py
     - [PROJECT_DIR]/tf/tf/settings.py
 
--------
 
