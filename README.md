@@ -26,3 +26,81 @@ TFServer
     - /usr/lib/python2.7/dist-packages/django/conf/global_settings.py
     - [PROJECT_DIR]/tf/tf/settings.py
 
+-------
+TFServer: alternative web-server and WSGI handler (works better):
+=================================================================
+
+How to setup a django using nginx+uWSGI (full tutorial with tests on https://uwsgi.readthedocs.org/en/latest/tutorials/Django_and_nginx.html)
+
+  1. If pip is still not available, install using:
+    $ sudo apt-get install python-setuptools
+
+  2. Download django:
+    $ sudo pip install Django
+
+  3. Install uwsgi:
+    $ sudo pip install uwsgi
+
+  4. Stop apache2 and uninstall it [if installed]:
+    $ sudo service apache2 stop
+    $ sudo apt-get remove apache2
+
+  5. Install nginx:
+    $ sudo apt-get install nginx
+    $ sudo service nginx start
+
+  6. Move to your project's path:
+    $ cd /path/to/mysite/
+
+  7. Create an uwsgi_params file on your mysite's root:
+    $ sudo nano uwsgi_params
+    And paste the content from this file: https://github.com/nginx/nginx/blob/master/conf/uwsgi_params
+
+  8. Create a file called mysite_nginx.conf and put this:
+
+    # mysite_nginx.conf
+    
+    # the upstream component nginx needs to connect to
+    upstream django {
+        server unix:///path/to/your/mysite/mysite.sock; # for a file socket
+        #server 127.0.0.1:8001; # for a web port socket (we'll use this first)
+    }
+    
+    # configuration of the server
+    server {
+        # the port your site will be served on
+        listen      8000;
+        # the domain name it will serve for
+        server_name .example.com; # substitute your machine's IP address or FQDN
+        charset     utf-8;
+    
+        # max upload size
+        client_max_body_size 75M;   # adjust to taste
+    
+        # Django media
+        location /media  {
+            alias /path/to/your/mysite/mysite/media;  # your Django project's media files - amend as required
+        }
+    
+        location /static {
+            alias /path/to/your/mysite/mysite/static; # your Django project's static files - amend as required
+        }
+    
+        # Finally, send all non-media requests to the Django server.
+        location / {
+            uwsgi_pass  django;
+            include     /path/to/your/mysite/uwsgi_params; # the uwsgi_params file you installed
+        }
+    }
+
+  9. Symlink to this file from /etc/nginx/sites-enabled:
+    $ sudo ln -s ~/path/to/your/mysite/mysite_nginx.conf /etc/nginx/sites-enabled/
+
+  10. Run this command (from inside your mysite's folder):
+    $ uwsgi --socket mysite.sock --module mysite.wsgi --chmod-socket=666
+
+  11. Restart nginx:
+    $ sudo service nginx restart
+
+
+
