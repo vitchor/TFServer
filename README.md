@@ -81,6 +81,9 @@ How to setup a django using nginx+uWSGI - full tutorial with tests on https://uw
   Press ``` ctrl + d ```  
   You can go back there anytime by typing ```$ screen -ls ``` and typing ```$ screen -r [PID_FROM_THE_SCREEN_YOU_WANT]```
 
+  12. To run server:  
+  ```uwsgi --ini /home/ubuntu/TFServer/tf/mysite_uwsgi.ini```
+  
 TFServer
 ========
 
