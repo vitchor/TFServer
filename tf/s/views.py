@@ -1,6 +1,7 @@
 # Create your views here.
 import sys
 import os
+
 #import tempfile
 #os.environ['MPLCONFIGDIR'] = "/home/ubuntu/TFServer/temp"
 import tempfile
@@ -14,10 +15,14 @@ from s.models import User, Picture, Featured_Picture
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import cStringIO
+import matplotlib
+matplotlib.use('AGG')
+import matplotlib.pylab as pl
+#pl.ioff()
 import time as time
 import numpy as np
 import scipy as sp
-import pylab as pl
+
 from PIL import Image
 from skimage.segmentation import slic
 # #from rectangle import Rectangle
