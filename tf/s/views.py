@@ -202,7 +202,7 @@ def test(request):
     first_sigma = 1
     second_slic_ratio = 2
     second_n_segments = 8
-    second_sigma =3
+    second_sigma =4
     first_max_iter = 10
     second_max_iter = 10
     
