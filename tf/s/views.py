@@ -352,7 +352,7 @@ def test(request):
         ###############################################################################
         # CALCULATE NEW CLUSTERING PARAMETERS
         ###############################################################################
-        if np.absolute(ambiguous_dif) < 200 or clustering_index == 3:
+        if np.absolute(ambiguous_dif) < 200 or clustering_index == 2:
             is_clustering_done = True
             print "ITERATION FINISHED AT INDEX ", clustering_index
         else:
