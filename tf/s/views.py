@@ -383,8 +383,6 @@ def test(request):
             first_image_cluster_segments_std_array[index_1][index_2] = first_image_cluster_segments_std[transitional_tuple]
             second_image_cluster_segments_std_array[index_1][index_2] = second_image_cluster_segments_std[transitional_tuple]
     
-    
-    
     ###############################################################################
     # CALCULATE FINAL IMAGE MATRIX
     ###############################################################################
@@ -404,6 +402,9 @@ def test(request):
     
     for index_1 in range(len(final_image_matrix)):
         for index_2 in  range(len(final_image_matrix[index_1])):
+            
+            if geometry_image_cluster_index > 300:
+                return {"result":"error"}
     
             if int(final_image_matrix[index_1][index_2]) is 0:
                 is_first = True
@@ -465,7 +466,7 @@ def test(request):
                     lower_geometry = int(max(bounds))
                     upper_geometry = int(min(bounds))
                     
-                    print "  MERGING..."
+                    print "  MERGING...",geometry_image_cluster_index
                     if is_first:
                         geometry_row_translation = geometries_first_row_index_dict[lower_geometry] - 1
     
@@ -685,6 +686,7 @@ def test(request):
     picture.save()
     
     print "DONE!"
+    print frame_url
     response_data = {"result": "OK", "url":frame_url, "user_id":user.id}
     
     #return render_to_response('uploader/fof_viewer.html', {'type':"power_feed_fof",'hide_arrows': 0, 'frame_list':frame_list,'next_fof_name':next_fof_index, 'prev_fof_name':prev_fof_index, 'fof_date':fof.pub_date, 'current_fof':fof.name, 'user_name':user_name, 'fof_id':fof.id}, context_instance=RequestContext(request))
